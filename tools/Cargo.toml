@@ -10,7 +10,7 @@ publish = false
 
 [dependencies]
 fantoccini = "0.17.3"
-tokio = { version = "1.4.0", features = [ "full" ] }
+tokio = { version = "1.16.1", features = [ "full" ] }
 feed-rs = "0.5.1"
 reqwest = "0.11.2"
 mkpasswd = "0.3.0"
