@@ -1,7 +1,7 @@
 [![CI](https://github.com/Gottox/lexoffice/workflows/CI/badge.svg)](https://github.com/Gottox/lexoffice/actions?query=workflow%3ACI)
 
-lexoffice - A typesafe API implementation for api.lexoffice.io
-==============================================================
+lexoffice - A typesafe API implementation for api.lexware.io
+============================================================
 
 For API docs see [the official docs](https://developers.lexoffice.io/docs/#lexoffice-api-documentation)
 

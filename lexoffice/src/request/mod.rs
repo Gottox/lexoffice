@@ -52,7 +52,7 @@ pub struct ResultInfo<T> {
 /// all Request variants that allow Requests to the API.
 ///
 /// If you want to reach an endpoint
-/// `https://api.lexoffice.io/foobar` you must implement this trait as follows:
+/// `https://api.lexware.io/foobar` you must implement this trait as follows:
 ///
 /// ```compile_fail
 /// use lexoffice::request::{Request, Endpoint};
