@@ -7,7 +7,7 @@ use reqwest::RequestBuilder;
 use reqwest::Url;
 use typed_builder::TypedBuilder;
 
-static BASE_URL: &str = "https://api.lexoffice.io/v1";
+static BASE_URL: &str = "https://api.lexware.io/v1";
 //static BASE_URL: &str = "http://127.0.0.1:8100";
 
 /// Represents an API Key
@@ -134,5 +134,66 @@ impl Client {
     /// Returns the base Url used by this client
     pub fn base_url(&self) -> &Url {
         &self.base_url
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_api_key_from_string() {
+        let key = ApiKey::from("test-api-key-123");
+        assert_eq!(key.to_string(), "test-api-key-123");
+    }
+
+    #[test]
+    fn test_api_key_from_str() {
+        let key: ApiKey = "another-test-key".into();
+        assert_eq!(key.to_string(), "another-test-key");
+    }
+
+    #[test]
+    fn test_client_new() {
+        let api_key = "test-key";
+        let client = Client::new(api_key);
+
+        // Verify the client is created successfully
+        assert_eq!(client.base_url().as_str(), BASE_URL);
+    }
+
+    #[test]
+    fn test_client_base_url() {
+        let client = Client::new("test-key");
+        assert_eq!(client.base_url().as_str(), "https://api.lexware.io/v1");
+    }
+
+    #[test]
+    fn test_client_custom_base_url() {
+        let custom_url = Url::parse("https://custom.api.example.com/v2").unwrap();
+        let client = Client::builder()
+            .api_key(ApiKey::from("test-key"))
+            .base_url(custom_url.clone())
+            .build();
+
+        assert_eq!(client.base_url(), &custom_url);
+    }
+
+    #[cfg(feature = "env")]
+    #[test]
+    fn test_api_key_from_env_missing() {
+        std::env::remove_var("LEXOFFICE_KEY");
+        let result = ApiKey::from_env();
+        assert!(result.is_err());
+    }
+
+    #[cfg(feature = "env")]
+    #[test]
+    fn test_api_key_from_env_present() {
+        std::env::set_var("LEXOFFICE_KEY", "env-test-key");
+        let result = ApiKey::from_env();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().to_string(), "env-test-key");
+        std::env::remove_var("LEXOFFICE_KEY");
     }
 }
