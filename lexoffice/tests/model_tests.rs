@@ -1,18 +1,19 @@
-use lexoffice::model::profile::{Profile, TaxType, DistanceSalesPrinciple};
+use lexoffice::model::profile::{DistanceSalesPrinciple, Profile, TaxType};
 use lexoffice::model::contacts::{Contact, Roles};
+use serde_json::json;
 
 #[test]
 fn test_profile_deserialization() {
-    let json = r#"{
+    let json = json!({
         "organizationId": "aa93e8a8-2aa3-470b-b914-caad8a255dd8",
         "companyName": "Test Company GmbH",
         "connectionId": "d5b34f53-362d-4658-b6e3-49e1a6c43e94",
         "taxType": "net",
         "distanceSalesPrinciple": "DESTINATION",
         "smallBusiness": false
-    }"#;
+    });
 
-    let profile: Profile = serde_json::from_str(json).unwrap();
+    let profile: Profile = serde_json::from_value(json).unwrap();
 
     assert_eq!(profile.company_name, Some("Test Company GmbH".to_string()));
     assert_eq!(profile.tax_type, Some(TaxType::Net));
@@ -28,11 +29,11 @@ fn test_profile_serialization() {
         .small_business(true)
         .build();
 
-    let json = serde_json::to_string(&profile).unwrap();
+    let json = serde_json::to_value(&profile).unwrap();
 
-    assert!(json.contains("My Company"));
-    assert!(json.contains("\"taxType\":\"gross\""));
-    assert!(json.contains("\"smallBusiness\":true"));
+    assert_eq!(json["companyName"], "My Company");
+    assert_eq!(json["taxType"], "gross");
+    assert_eq!(json["smallBusiness"], true);
 }
 
 #[test]
@@ -60,21 +61,21 @@ fn test_distance_sales_principle_from_str() {
 
 #[test]
 fn test_contact_minimal_deserialization() {
-    let json = r#"{
+    let json = json!({
         "id": "be9475f4-ef80-442b-8ab9-3ab8b1a2aeb9",
         "version": 1,
         "roles": {},
         "archived": false
-    }"#;
+    });
 
-    let contact: Contact = serde_json::from_str(json).unwrap();
+    let contact: Contact = serde_json::from_value(json).unwrap();
 
     assert_eq!(contact.version, 1);
 }
 
 #[test]
 fn test_contact_with_company_deserialization() {
-    let json = r#"{
+    let json = json!({
         "id": "be9475f4-ef80-442b-8ab9-3ab8b1a2aeb9",
         "version": 1,
         "roles": {
@@ -89,9 +90,9 @@ fn test_contact_with_company_deserialization() {
             "allowTaxFreeInvoices": true
         },
         "archived": false
-    }"#;
+    });
 
-    let contact: Contact = serde_json::from_str(json).unwrap();
+    let contact: Contact = serde_json::from_value(json).unwrap();
 
     assert!(contact.company.is_some());
     let company = contact.company.unwrap();
@@ -120,8 +121,8 @@ fn test_roundtrip_profile() {
         .small_business(false)
         .build();
 
-    let json = serde_json::to_string(&original).unwrap();
-    let deserialized: Profile = serde_json::from_str(&json).unwrap();
+    let json = serde_json::to_value(&original).unwrap();
+    let deserialized: Profile = serde_json::from_value(json).unwrap();
 
     assert_eq!(original.company_name, deserialized.company_name);
     assert_eq!(original.tax_type, deserialized.tax_type);
